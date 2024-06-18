@@ -1,0 +1,70 @@
+cd .ssh
+sudo apt-get install openssh-server
+ssh-keygen -t rsa
+cat id_rsa.pub > authorized_keys
+echo "all set done"
+
+sudo su root
+
+
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt-get update
+sudo apt-get install blobfuse
+touch /home/Arulraj/fuse_connection.cfg
+mkdir /home/Arulraj/mycontainer
+echo "accountName storageac1606" >> /home/Arulraj/fuse_connection.cfg
+echo "accountKey i498FuCO9stXoH4RUszWDaqAL4uI2EOoTsNMN2VRG2OMh2sOFEQeOT/dHRRrPFo8ZIDRqWmWoa6P+AStUQc9qA==" >> /home/Arulraj/fuse_connection.cfg
+echo "containerName container1" >> /home/Arulraj/fuse_connection.cfg
+chmod 600 /home/Arulraj/fuse_connection.cfg
+blobfuse /home/Arulraj/mycontainer --tmp-path=/mnt/resource/blobfusetmp  --config-file=/home/Arulraj/fuse_connection.cfg -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120
+cd /home/Arulraj/mycontainer
+cp hadoop-2.9.0.tar.gz /home/Arulraj
+cp jdk-8u341-linux-x64.tar.gz /home/Arulraj
+cd /home/Arulraj
+tar -zxvf hadoop-2.9.0.tar.gz
+tar -zxvf jdk-8u341-linux-x64.tar.gz
+cat /home/Arulraj/mycontainer/core-site.xml > /home/Arulraj/hadoop-2.9.0/etc/hadoop/core-site.xml
+cat /home/Arulraj/mycontainer/yarn-site.xml > /home/Arulraj/hadoop-2.9.0/etc/hadoop/yarn-site.xml
+cat /home/Arulraj/mycontainer/hdfs-site.xml > /home/Arulraj/hadoop-2.9.0/etc/hadoop/hdfs-site.xml
+mv /home/Arulraj/hadoop-2.9.0/etc/hadoop/mapred-site.xml.template /home/Arulraj/hadoop-2.9.0/etc/hadoop/mapred-site.xml
+cat /home/Arulraj/mycontainer/mapred-site.xml > /home/Arulraj/hadoop-2.9.0/etc/hadoop/mapred-site.xml
+cat /home/Arulraj/mycontainer/hadoop-env.sh > /home/Arulraj/hadoop-2.9.0/etc/hadoop/hadoop-env.sh
+cat /home/Arulraj/mycontainer/mapred-env.sh > /home/Arulraj/hadoop-2.9.0/etc/hadoop/mapred-env.sh 
+cat /home/Arulraj/mycontainer/yarn-env.sh > /home/Arulraj/hadoop-2.9.0/etc/hadoop/yarn-env.sh
+cat /home/Arulraj/mycontainer/slaves > /home/Arulraj/hadoop-2.9.0/etc/hadoop/slaves
+cat /home/Arulraj/mycontainer/envsetup >> /home/Arulraj/.bashrc
+echo "done"
+
+sudo su Arulraj
+
+cd /home/Arulraj/hadoop-2.9.0/
+bin/hadoop namenode -format
+sbin/start-all.sh
+jps
+bin/hadoop dfs -ls /
+bin/hadoop dfs -mkdir /data
+bin/hadoop dfs -put /home/Arulraj/words /abc.txt
+sbin/stop-all.sh
+
+sudo su root
+cd /home/Arulraj/mycontainer
+cp apache-hive-2.3.5-bin.tar.gz /home/Arulraj
+cd /home/Arulraj
+tar -zxvf apache-hive-2.3.5-bin.tar.gz
+cd /home/Arulraj/mycontainer
+cp mysql-connector-java-8.0.26.jar /home/Arulraj/apache-hive-2.3.5-bin/lib
+sudo su Arulraj
+
+sudo apt-get install mysql-server
+sudo mysql -u root -p
+exit
+
+sudo su root
+
+mv /home/Arulraj/apache-hive-2.3.5-bin/conf/hive-default.xml.template /home/Arulraj/apache-hive-2.3.5-bin/conf/hive-site.xml
+cat /home/Arulraj/mycontainer/hive-site.xml > /home/Arulraj/apache-hive-2.3.5-bin/conf/hive-site.xml
+
+
+cd /home/Arulraj/apache-hive-2.3.5-bin
+bin/schematool -dbType mysql -initSchema
