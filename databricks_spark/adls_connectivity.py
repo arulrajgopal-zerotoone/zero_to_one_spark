@@ -45,3 +45,7 @@ display(dbutils.fs.ls("/mnt/raw"))
 # COMMAND ----------
 
 
+
+##################### adls connect through accesskey
+
+
