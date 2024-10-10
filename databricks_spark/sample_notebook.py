@@ -84,7 +84,21 @@ ratings_df.write.mode("overwrite").saveAsTable("hive_metastore.demo.ratings")
 
 # COMMAND ----------
 
+DROP TABLE IF EXISTS stage.circuits;
 
+CREATE TABLE stage.circuits(
+  circuit_id INT,
+  circuitref STRING,
+  name STRING,
+  location STRING,
+  country STRING,
+  lat Double,
+  lng Double,
+  alt int,
+  loaded_time timestamp
+)
+using csv
+location '/mnt/stage/circuits'
 
 # COMMAND ----------
 
