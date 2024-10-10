@@ -84,6 +84,12 @@ ratings_df.write.mode("overwrite").saveAsTable("hive_metastore.demo.ratings")
 
 # COMMAND ----------
 
+CREATE DATABASE IF NOT EXISTS stage
+
+-- COMMAND ----------
+
+CREATE DATABASE IF NOT EXISTS curated
+
 DROP TABLE IF EXISTS stage.circuits;
 
 CREATE TABLE stage.circuits(
