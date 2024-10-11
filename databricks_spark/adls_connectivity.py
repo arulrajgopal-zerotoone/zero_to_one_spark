@@ -29,7 +29,7 @@ display(dbutils.fs.mounts())
 # COMMAND ----------
 
 storage_account_name = "arulrajstorageaccount"
-accountkey= "<account-key>"  
+accountkey= "account_key"  
 container_name = "private"
 fullname = "fs.azure.account.key." +storage_account_name+ ".blob.core.windows.net"
 
@@ -51,13 +51,12 @@ read_df = spark.read\
         .option("sep", "~")\
         .load("/mnt/private/emp_details.csv")
 
-# COMMAND ----------
 
 read_df.display()
 
 # COMMAND ----------
 
-# dbutils.fs.unmount('/mnt/private')
+dbutils.fs.unmount('/mnt/private')
 
 # COMMAND ----------
 
