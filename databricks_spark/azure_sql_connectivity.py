@@ -106,18 +106,5 @@ df = spark.read \
     .load()
 
 
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
 
 
