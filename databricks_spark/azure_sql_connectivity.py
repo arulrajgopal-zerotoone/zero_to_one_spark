@@ -1,44 +1,123 @@
 # Databricks notebook source
-spark.conf.set("fs.azure.account.key.<your-storage-account-name>.dfs.core.windows.net", "<your-access-key>")
+# MAGIC %md
+# MAGIC #Azure SQL connect using username & password
 
 # COMMAND ----------
 
-# read a file
+# MAGIC %md
+# MAGIC ## reading
 
-df = spark.read\
-    .format("csv")\
+# COMMAND ----------
 
-
-# Databricks notebook source
-jdbcHostname = "mysqlserver9898.database.windows.net"
+jdbcHostname = "arulsqlserver.database.windows.net"
 jdbcPort = 1433
-jdbcDatabase = "mydb"
+jdbcDatabase = "database1"
 jdbcUsername = "Arulraj"
 jdbcPassword = "test@1234"
 jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
 
-jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};user={jdbcUsername};password={jdbcPassword}"
+employee_df = spark.read \
+    .format("jdbc") \
+    .option("url", jdbcUrl) \
+    .option("dbtable", "Employees") \
+    .option("user", jdbcUsername) \
+    .option("password", jdbcPassword) \
+    .option("driver", jdbcDriver) \
+    .load()
 
 # COMMAND ----------
 
-races_circuits_df = spark.read.table('curated.races_circuits')
-results_drivers_df = spark.read.table('curated.results_drivers')
+employee_df.display()
 
 # COMMAND ----------
 
-races_circuits_df.write \
-    .format("jdbc")\
-    .option("url",jdbcUrl)\
-    .mode("overwrite")\
-    .option("dbtable","races_circuits")\
+# MAGIC %md
+# MAGIC ## writing
+
+# COMMAND ----------
+
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+
+# Define the schema for the students dataframe
+schema = StructType([
+    StructField("student_id", IntegerType(), nullable=False),
+    StructField("student_name", StringType(), nullable=False),
+    StructField("age", IntegerType(), nullable=False),
+    StructField("grade", StringType(), nullable=False)
+])
+
+# Create the students dataframe with the specified schema and data
+students_data = [
+    (1, "John Doe", 18, "A"),
+    (2, "Jane Smith", 17, "B"),
+    (3, "Mike Johnson", 19, "A"),
+    (4, "Emily Brown", 16, "C")
+]
+
+students_df = spark.createDataFrame(students_data, schema)
+
+students_df.display()
+
+# COMMAND ----------
+
+jdbcHostname = "arulsqlserver.database.windows.net"
+jdbcPort = 1433
+jdbcDatabase = "database1"
+jdbcUsername = "Arulraj"
+jdbcPassword = "test@1234"
+jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
+
+students_df.write \
+    .format("jdbc") \
+    .option("url", jdbcUrl) \
+    .option("dbtable", "Students") \
+    .option("user", jdbcUsername) \
+    .option("password", jdbcPassword) \
+    .option("driver", jdbcDriver) \
+    .mode("overwrite") \
     .save()
 
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #Azure SQL connect using spn
 
 # COMMAND ----------
 
-results_drivers_df.write \
-    .format("jdbc")\
-    .option("url",jdbcUrl)\
-    .mode("overwrite")\
-    .option("dbtable","results_drivers")\
-    .save()
+jdbcHostname = "arulsqlserver.database.windows.net"
+jdbcPort = 1433
+jdbcDatabase = "database1"
+jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+
+spnClientId = ""
+spnClientSecret = ""
+
+jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
+
+df = spark.read \
+    .format("jdbc") \
+    .option("url", jdbcUrl) \
+    .option("dbtable", "Employees") \
+    .option("user", spnClientId) \
+    .option("password", spnClientSecret) \
+    .option("driver", jdbcDriver)\
+    .load()
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
