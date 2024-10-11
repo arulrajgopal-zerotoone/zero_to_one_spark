@@ -106,5 +106,24 @@ df = spark.read \
     .load()
 
 
+# COMMAND ----------
 
+jdbcHostname = "arulsqlserver.database.windows.net"
+jdbcPort = 1433
+jdbcDatabase = "database1"
+jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 
+spnClientId = ""
+spnClientSecret = ""
+tenantId = ""
+
+jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
+
+df = spark.read \
+    .format("jdbc") \
+    .option("url", jdbcUrl) \
+    .option("dbtable", "Employees") \
+    .option("user", spnClientId + "@" + tenantId) \
+    .option("password", spnClientSecret) \
+    .option("driver", jdbcDriver)\
+    .load()
