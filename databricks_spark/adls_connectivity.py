@@ -4,19 +4,18 @@
 
 # COMMAND ----------
 
-
 spark.conf.set(
     "fs.azure.account.key.arulrajstorageaccount.blob.core.windows.net",
     "<account-key>"
 )
 
-# emp_full_df = spark.read\
-#         .format("csv")\
-#         .schema(schema)\
-#         .option("Header",True)\
-#         .option("sep", "~")\
-#         .load("wasbs://private@arulrajstorageaccount.blob.core.windows.net/sample_employee/scd_implementations/emp_details.csv")
+read_df = spark.read\
+        .format("csv")\
+        .option("Header",True)\
+        .option("sep", "~")\
+        .load("wasbs://private@arulrajstorageaccount.blob.core.windows.net/sample_employee/emp_details/emp_details.csv")
 
+read_df.display()
 
 # COMMAND ----------
 
@@ -29,14 +28,14 @@ display(dbutils.fs.mounts())
 
 # COMMAND ----------
 
-storage_account_name = "sparkdemostorageaccount"
-accountkey= ""  
-container_name = "raw"
+storage_account_name = "arulrajstorageaccount"
+accountkey= "<account-key>"  
+container_name = "private"
 fullname = "fs.azure.account.key." +storage_account_name+ ".blob.core.windows.net"
 
 
 dbutils.fs.mount(  
-  source = f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net", 
+  source = f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net/sample_employee/emp_details/", 
   mount_point =f"/mnt/{container_name}", 
   extra_configs = {fullname : accountkey}) 
 
@@ -46,7 +45,19 @@ display(dbutils.fs.mounts())
 
 # COMMAND ----------
 
-# dbutils.fs.unmount('/mnt/raw')
+read_df = spark.read\
+        .format("csv")\
+        .option("Header",True)\
+        .option("sep", "~")\
+        .load("/mnt/private/emp_details.csv")
+
+# COMMAND ----------
+
+read_df.display()
+
+# COMMAND ----------
+
+# dbutils.fs.unmount('/mnt/private')
 
 # COMMAND ----------
 
