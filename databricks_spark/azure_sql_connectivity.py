@@ -12,8 +12,8 @@
 jdbcHostname = "arulsqlserver.database.windows.net"
 jdbcPort = 1433
 jdbcDatabase = "database1"
-jdbcUsername = "Arulraj"
-jdbcPassword = "test@1234"
+jdbcUsername = "<username>"
+jdbcPassword = "<password>"
 jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
 
@@ -64,8 +64,8 @@ students_df.display()
 jdbcHostname = "arulsqlserver.database.windows.net"
 jdbcPort = 1433
 jdbcDatabase = "database1"
-jdbcUsername = "Arulraj"
-jdbcPassword = "test@1234"
+jdbcUsername = "<username>"
+jdbcPassword = "<password>"
 jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
 
@@ -83,6 +83,29 @@ students_df.write \
 
 # MAGIC %md
 # MAGIC #Azure SQL connect using spn
+
+# COMMAND ----------
+
+jdbcHostname = "arulsqlserver.database.windows.net"
+jdbcPort = 1433
+jdbcDatabase = "database1"
+
+jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};database={jdbcDatabase};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+
+connectionProperties = {
+    "user": "",
+    "password": "",
+    "authentication": "ActiveDirectoryServicePrincipal",
+    "encrypt": "true",
+    "trustServerCertificate": "false",
+    "hostNameInCertificate": "*.database.windows.net"
+}
+
+tableName = "Employees"
+
+df = spark.read.jdbc(url=jdbcUrl, table=tableName, properties=connectionProperties)
+
+df.display()
 
 # COMMAND ----------
 
@@ -108,22 +131,16 @@ df = spark.read \
 
 # COMMAND ----------
 
-jdbcHostname = "arulsqlserver.database.windows.net"
-jdbcPort = 1433
-jdbcDatabase = "database1"
-jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 
-spnClientId = ""
-spnClientSecret = ""
-tenantId = ""
 
-jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
+# COMMAND ----------
 
-df = spark.read \
-    .format("jdbc") \
-    .option("url", jdbcUrl) \
-    .option("dbtable", "Employees") \
-    .option("user", spnClientId + "@" + tenantId) \
-    .option("password", spnClientSecret) \
-    .option("driver", jdbcDriver)\
-    .load()
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
