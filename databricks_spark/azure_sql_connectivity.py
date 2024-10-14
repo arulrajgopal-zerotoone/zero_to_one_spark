@@ -38,6 +38,7 @@ employee_df.display()
 # COMMAND ----------
 
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from pyspark.sql.functions import current_timestamp
 
 # Define the schema for the students dataframe
 schema = StructType([
@@ -55,7 +56,8 @@ students_data = [
     (4, "Emily Brown", 16, "C")
 ]
 
-students_df = spark.createDataFrame(students_data, schema)
+students_df = spark.createDataFrame(students_data, schema)\
+                    .withColumn("current_timestamp", current_timestamp())
 
 students_df.display()
 
@@ -86,61 +88,77 @@ students_df.write \
 
 # COMMAND ----------
 
-jdbcHostname = "arulsqlserver.database.windows.net"
-jdbcPort = 1433
-jdbcDatabase = "database1"
-
-jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};database={jdbcDatabase};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
-
-connectionProperties = {
-    "user": "",
-    "password": "",
-    "authentication": "ActiveDirectoryServicePrincipal",
-    "encrypt": "true",
-    "trustServerCertificate": "false",
-    "hostNameInCertificate": "*.database.windows.net"
-}
-
-tableName = "Employees"
-
-df = spark.read.jdbc(url=jdbcUrl, table=tableName, properties=connectionProperties)
-
-df.display()
+# MAGIC %md
+# MAGIC ##Note:- 
+# MAGIC In case of below failure, then while using service prinicpal to access Azure sql
+# MAGIC
+# MAGIC -> Go to the azure sql server ->  settings -> Microsoft Entra ID -> Set Admin
+# MAGIC
+# MAGIC
+# MAGIC com.microsoft.sqlserver.jdbc.SQLServerException: Failed to authenticate the user be0a6a77-ef54-4b1c-8641-e3f4d3b5d1c0 in Active Directory (Authentication=ActiveDirectoryServicePrincipal). AADSTS900021: Requested tenant identifier 00000000-0000-0000-0000-000000000000 is not valid. Tenant identifiers may not be an empty GUID. Trace ID: d5119b35-aa35-463f-a019-c0a6a
 
 # COMMAND ----------
 
-jdbcHostname = "arulsqlserver.database.windows.net"
-jdbcPort = 1433
-jdbcDatabase = "database1"
-jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+# MAGIC %md
+# MAGIC #reading
 
-spnClientId = ""
-spnClientSecret = ""
+# COMMAND ----------
 
-jdbcUrl = f"jdbc:sqlserver://{jdbcHostname}:{jdbcPort};databaseName={jdbcDatabase};"
-
-df = spark.read \
-    .format("jdbc") \
-    .option("url", jdbcUrl) \
-    .option("dbtable", "Employees") \
-    .option("user", spnClientId) \
-    .option("password", spnClientSecret) \
-    .option("driver", jdbcDriver)\
+employee_df = spark.read\
+    .format("sqlserver")\
+    .option("host", "arulsqlserver.database.windows.net")\
+    .option("authentication","ActiveDirectoryServicePrincipal")\
+    .option("user", "<app_id>")\
+    .option("password", "<secret>")\
+    .option("database","database1")\
+    .option("dbtable","Employees")\
     .load()
 
 
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
+employee_df.display()
 
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## writing
+
+# COMMAND ----------
+
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from pyspark.sql.functions import current_timestamp
+
+# Define the schema for the students dataframe
+schema = StructType([
+    StructField("student_id", IntegerType(), nullable=False),
+    StructField("student_name", StringType(), nullable=False),
+    StructField("age", IntegerType(), nullable=False),
+    StructField("grade", StringType(), nullable=False)
+])
+
+# Create the students dataframe with the specified schema and data
+students_data = [
+    (1, "John Doe", 18, "A"),
+    (2, "Jane Smith", 17, "B"),
+    (3, "Mike Johnson", 19, "A"),
+    (4, "Emily Brown", 16, "C")
+]
+
+students_df = spark.createDataFrame(students_data, schema)\
+                    .withColumn("current_timestamp", current_timestamp())
+
+students_df.display()
 
 
 # COMMAND ----------
 
-
+students_df.write\
+    .format("sqlserver")\
+    .mode("overwrite")\
+    .option("host", "arulsqlserver.database.windows.net")\
+    .option("authentication","ActiveDirectoryServicePrincipal")\
+    .option("user", "<app_id>")\
+    .option("password", "<secret>")\
+    .option("database","database1")\
+    .option("dbtable","students")\
+    .save()
