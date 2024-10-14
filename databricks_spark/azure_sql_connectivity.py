@@ -92,7 +92,7 @@ students_df.write \
 # MAGIC ##Note:- 
 # MAGIC In case of below failure, then while using service prinicpal to access Azure sql
 # MAGIC
-# MAGIC -> Go to the azure sql server ->  settings -> Microsoft Entra ID -> Set Admin -> <select the spn>
+# MAGIC -> Go to the azure sql server ->  settings -> Microsoft Entra ID -> Set Admin -> <select the service principal>
 # MAGIC
 # MAGIC
 # MAGIC com.microsoft.sqlserver.jdbc.SQLServerException: Failed to authenticate the user be0a6a77-ef54-4b1c-8641-e3f4d3b5d1c0 in Active Directory (Authentication=ActiveDirectoryServicePrincipal). AADSTS900021: Requested tenant identifier 00000000-0000-0000-0000-000000000000 is not valid. Tenant identifiers may not be an empty GUID. Trace ID: d5119b35-aa35-463f-a019-c0a6a
