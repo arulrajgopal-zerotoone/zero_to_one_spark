@@ -1,10 +1,11 @@
 // Databricks notebook source
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.{row_number,col,desc}
 import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.types.{StructType, StructField, StringType, IntegerType,DateType}
 
 // COMMAND ----------
 
-val data1 = Seq(
+val employee_data = Seq(
   (1, "Alice", "2023-10-01", 500),
   (2, "Bob", "2023-10-02", 700),
   (3, "Charlie", "2023-10-03", 800),
@@ -25,10 +26,27 @@ val data1 = Seq(
   (18, "Rita", "2023-10-18", 600),
   (19, "Steve", "2023-10-19", 400),
   (20, "Tom", "2023-10-20", 300)
-).toDF("id", "name", "date", "salary")
+)
+
+val employee_schema = StructType(Seq(
+  StructField("id", IntegerType, nullable = false),
+  StructField("name", StringType, nullable = true),
+  StructField("Date", StringType, nullable = true),
+  StructField("salary", IntegerType, nullable = true),
+
+))
+
+val employee_df = spark.createDataFrame(
+  spark.sparkContext.parallelize(employee_data.map(Row.fromTuple)),
+  employee_schema
+)
+
+val employee_df_with_date = employee_df.withColumn("Date", col("Date").cast(DateType))
 
 
-val data2 = Seq(
+// COMMAND ----------
+
+val employee_dept = Seq(
   (1, "Alice", "A"),
   (2, "Bob", "B"),
   (3, "Charlie", "A"),
@@ -49,15 +67,47 @@ val data2 = Seq(
   (18, "Rita", "C"),
   (19, "Steve", "A"),
   (20, "Tom", "C")
-).toDF("id", "name", "department")
+)
+
+val employee_dept_schema = StructType(Seq(
+  StructField("id", IntegerType, nullable = false),
+  StructField("name", StringType, nullable = true),
+  StructField("Department", StringType, nullable = true)
+
+))
+
+val employee_dept_df = spark.createDataFrame(
+  spark.sparkContext.parallelize(employee_dept.map(Row.fromTuple)),
+  employee_dept_schema
+)
+
 
 // COMMAND ----------
 
-val joinedDF = data1.alias("LH").join(data2.alias("RH"), "id").select("LH.id","LH.name","LH.date","LH.salary","RH.department")
+val joinedDF = employee_df_with_date.alias("LH")
+                    .join(employee_dept_df.alias("RH"), "id").select("LH.id","LH.name","LH.date","LH.salary","RH.department")
+
+
 val windowSpec = Window.partitionBy("department").orderBy(desc("salary"))
 val dfWithRank = joinedDF.withColumn("rank", row_number().over(windowSpec))
-val filtered_df = dfWithRank.filter(col("rank")===1).drop("rank")
+val final_df = dfWithRank.filter(col("rank")===1).drop("rank")
 
 // COMMAND ----------
 
-display(filtered_df)
+display(final_df)
+
+// COMMAND ----------
+
+
+
+// COMMAND ----------
+
+
+
+// COMMAND ----------
+
+
+
+// COMMAND ----------
+
+
