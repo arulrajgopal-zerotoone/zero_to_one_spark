@@ -1,7 +1,7 @@
 # Databricks notebook source
 storage_account_name = "arulrajdemoadls"  
 accountkey= ""  
-container_name = "raw"
+container_name = "test"
 fullname = "fs.azure.account.key." +storage_account_name+ ".blob.core.windows.net"
 
 dbutils.fs.mount(  
@@ -14,3 +14,7 @@ dbutils.fs.mount(
 # COMMAND ----------
 
 display(dbutils.fs.mounts())
+
+# COMMAND ----------
+
+
