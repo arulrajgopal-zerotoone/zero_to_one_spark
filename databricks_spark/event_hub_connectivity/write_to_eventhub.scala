@@ -20,8 +20,8 @@ val schema = StructType(Array(
 val df = spark.readStream
               .format("csv")
               .schema(schema)
-              .option("Header",True)
-              .load("/mnt/test/employee_details")
+              .option("Header",true)
+              .load("/mnt/test/raw/employee_details")
 
 
 val dfWithLoadedTime = df.withColumn("loaded_time", current_timestamp())
@@ -30,34 +30,32 @@ val filteredDf = dfWithLoadedTime.filter(!col("department").equalTo("Finance"))
 
 // COMMAND ----------
 
-val curatedPath = "/mnt/curated/employee_details"
-
 val query = filteredDf
   .writeStream
   .format("delta")
-  .option("path", curatedPath)
-  .option("checkpointLocation", "/mnt/checkpoints/employee_details_curated")
+  .option("path", "/mnt/test/curated/employee_details")
+  .option("checkpointLocation", "/mnt/test/checkpoints/employee_details_curated")
   .trigger(Trigger.ProcessingTime("10 seconds"))
   .start()
 
 // COMMAND ----------
 
-val df = spark.read.format("delta").load("/mnt/curated/employee_details")
+val df = spark.read.format("delta").load("/mnt/test/curated/employee_details")
 display(df)
 
 // COMMAND ----------
 
-// val connectionString = ConnectionStringBuilder("Endpoint=sb://<your-event-hub-namespace>.servicebus.windows.net/;SharedAccessKeyName=<your-policy-name>;SharedAccessKey=<your-shared-access-key>;EntityPath=<your-event-hub-name>")
-//   .setEventHubName("<your-event-hub-name>")
-//   .build
+val connectionString = ConnectionStringBuilder("Endpoint=sb://arul-event-hub.servicebus.windows.net/;SharedAccessKeyName=event-hub-policy;SharedAccessKey=;EntityPath=arul-event-hub")
+  .setEventHubName("arul-event-hub")
+  .build
 
-// val eventHubsConf = EventHubsConf(connectionString)
-//   .setStartingPosition(EventPosition.fromEndOfStream)
+val eventHubsConf = EventHubsConf(connectionString)
+  .setStartingPosition(EventPosition.fromEndOfStream)
 
-// val query = filteredDf
-//   .writeStream
-//   .format("eventhubs")
-//   .options(eventHubsConf.toMap)
-//   .trigger(Trigger.ProcessingTime("10 seconds"))
-//   .option("checkpointLocation", "/mnt/checkpoints/employee_details")
-//   .start()
+val query = filteredDf
+  .writeStream
+  .format("eventhubs")
+  .options(eventHubsConf.toMap)
+  .trigger(Trigger.ProcessingTime("10 seconds"))
+  .option("checkpointLocation", "/mnt/checkpoints/employee_details")
+  .start()
