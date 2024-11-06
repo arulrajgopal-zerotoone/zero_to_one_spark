@@ -40,7 +40,6 @@ val query = filteredDf
 
 // COMMAND ----------
 
-
 val endpoint = "sb://arul-event-hub.servicebus.windows.net/"
 val sharedAccessKeyName = "event-hub-policy"
 val sharedAccessKey = ""
