@@ -62,6 +62,8 @@ val query = dfWithBody
   .option("checkpointLocation", "/mnt/test/checkpoints/employee_details")
   .start()
 
+  
+
 // COMMAND ----------
 
 val df = spark.read.format("delta").load("/mnt/test/curated/employee_details")
