@@ -1,7 +1,7 @@
 # Databricks notebook source
-storage_account_name = "dbwsmetastore"  
+storage_account_name = "arulrajdemoadls"  
 accountkey= ""  
-container_name = "checkpoint"
+container_name = "raw"
 fullname = "fs.azure.account.key." +storage_account_name+ ".blob.core.windows.net"
 
 dbutils.fs.mount(  
@@ -10,9 +10,7 @@ dbutils.fs.mount(
   extra_configs = {fullname : accountkey}) 
 
 
-dbutils.fs.mounts()
-
 
 # COMMAND ----------
 
-
+display(dbutils.fs.mounts())
