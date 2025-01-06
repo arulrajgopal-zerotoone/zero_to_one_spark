@@ -1,1 +1,8 @@
+sudo apt install default-jdk
 
+java -version
+
+echo "################################################################# java installed successfully"
+
+
+wget https://dlcdn.apache.org/spark/spark-3.5.4/spark-3.5.4-bin-hadoop3.tgz
