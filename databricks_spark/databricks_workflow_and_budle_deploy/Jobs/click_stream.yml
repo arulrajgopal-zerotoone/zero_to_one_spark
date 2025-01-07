@@ -2,6 +2,14 @@ resources:
   jobs:
     click_stream:
       name: click_stream
+      email_notifications:
+        on_duration_warning_threshold_exceeded:
+          - arulrajgopal@Outlook.com
+      health:
+        rules:
+          - metric: RUN_DURATION_SECONDS
+            op: GREATER_THAN
+            value: 300
       tasks:
         - task_key: click_stream_filter
           notebook_task:
