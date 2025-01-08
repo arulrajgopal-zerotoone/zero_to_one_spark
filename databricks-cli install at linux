@@ -10,4 +10,10 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 sudo apt-get install build-essential
 
 
+brew tap databricks/tap
+brew install databricks
+
+databricks -v
+
+
 
