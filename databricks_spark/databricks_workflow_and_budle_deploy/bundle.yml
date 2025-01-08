@@ -1,8 +1,8 @@
 bundle:
   name: my-databricks-bundle
 
-includes:
-  - file: jobs/click_stream.yaml
+include:
+  - Jobs/click_stream.yml
 
 targets:
   dev:
