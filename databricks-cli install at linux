@@ -1,13 +1,13 @@
 #Install HomeBrew
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo >> /home/Arulraj/.bashrc
+echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/Arulraj/.bashrc
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-- Run these commands in your terminal to add Homebrew to your PATH:
-    echo >> /home/Arulraj/.bashrc
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/Arulraj/.bashrc
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-- Install Homebrew's dependencies if you have sudo access:
-    sudo apt-get install build-essential
+
+#Install Homebrew's dependencies if you have sudo access:
+sudo apt-get install build-essential
 
 
 
