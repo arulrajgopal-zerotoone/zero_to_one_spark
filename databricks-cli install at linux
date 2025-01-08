@@ -15,5 +15,11 @@ brew install databricks
 
 databricks -v
 
+#configure
+databricks configure
+- add url as host
+- personal access token from settings > user > developer > access tokens
+
+
 
 
