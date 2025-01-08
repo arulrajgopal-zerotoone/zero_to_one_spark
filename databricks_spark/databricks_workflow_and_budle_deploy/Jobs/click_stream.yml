@@ -16,7 +16,7 @@ resources:
             notebook_path: /Workspace/Users/arulrajg16061992@gmail.com/zero_to_one_spark/databricks_spark/databricks_workflow_and_budle_deploy/Task/FilterTask
             source: WORKSPACE
           existing_cluster_id: 0107-130629-piy4u21t
-          max_retries: 1
+          max_retries: 2
           min_retry_interval_millis: 300000
         - task_key: click_stream_agg
           depends_on:
