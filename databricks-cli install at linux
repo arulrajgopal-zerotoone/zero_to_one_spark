@@ -4,9 +4,6 @@
 echo >> /home/Arulraj/.bashrc
 echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/Arulraj/.bashrc
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-
-#Install Homebrew's dependencies if you have sudo access:
 sudo apt-get install build-essential
 
 
