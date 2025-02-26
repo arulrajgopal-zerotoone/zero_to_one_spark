@@ -5,3 +5,7 @@ spark-shell
 #pyspark shell
 pyspark
 quit()
+
+
+#for spark ui
+localhost:4040
