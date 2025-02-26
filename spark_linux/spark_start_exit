@@ -1,0 +1,7 @@
+#park-shell (scala)
+spark-shell
+:quit
+
+#pyspark shell
+pyspark
+quit()
