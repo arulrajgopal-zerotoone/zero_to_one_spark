@@ -7,5 +7,5 @@ pyspark
 quit()
 
 
-#for spark ui
+#for spark ui, at browser
 localhost:4040
