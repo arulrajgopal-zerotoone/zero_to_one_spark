@@ -9,3 +9,15 @@ quit()
 
 #for spark ui, at browser
 localhost:4040
+
+
+#start spark
+cd /opt/spark/spark-3.5.4-bin-hadoop3/sbin/
+sh start-all.sh
+
+#check start is started
+jps
+
+#stop spark
+sh stop-all.sh
+
