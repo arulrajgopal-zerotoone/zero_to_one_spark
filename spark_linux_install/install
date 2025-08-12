@@ -12,7 +12,7 @@ mkdir -p /opt/spark
 cd /opt/spark
 
 #download spark and extract the tar
-wget https://dlcdn.apache.org/spark/spark-3.5.4/spark-3.5.4-bin-hadoop3.tgz
+wget https://dlcdn.apache.org/spark/spark-4.0.0/spark-4.0.0-bin-hadoop3.tgz
 
 tar -xvf spark-3.5.4-bin-hadoop3.tgz
 
@@ -21,7 +21,7 @@ tar -xvf spark-3.5.4-bin-hadoop3.tgz
 cd
 nano .bashrc
 
-SPARK_HOME=/opt/spark/spark-3.5.4-bin-hadoop3/
+SPARK_HOME=/opt/spark/spark-4.0.0-bin-hadoop3/
 export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/bin
 
 source .bashrc
