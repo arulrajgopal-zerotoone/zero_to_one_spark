@@ -3,6 +3,7 @@
 # MAGIC # ADLS connect through account key without mounting
 
 # COMMAND ----------
+# using blob & wasbs
 
 spark.conf.set(
     "fs.azure.account.key.arulrajstorageaccount.blob.core.windows.net",
@@ -16,6 +17,38 @@ read_df = spark.read\
         .load("wasbs://private@arulrajstorageaccount.blob.core.windows.net/sample_employee/emp_details/emp_details.csv")
 
 read_df.display()
+
+
+# COMMAND ----------
+# using dfs & abfss
+
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
+
+account_key = ""
+
+spark.conf.set(
+    "fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",
+    account_key
+)
+
+schema = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("first_name", StringType(), True),
+    StructField("middle_name", StringType(), True),
+    StructField("last_name", StringType(), True),
+    StructField("gender", StringType(), True),
+    StructField("birth_dt", TimestampType(), True),
+    StructField("ssn", StringType(), True),
+    StructField("salary", IntegerType(), True)
+])
+
+
+df = spark.read.format("csv") \
+    .schema(schema) \
+    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people_csv/people.csv")
+
+df.display()
 
 # COMMAND ----------
 
