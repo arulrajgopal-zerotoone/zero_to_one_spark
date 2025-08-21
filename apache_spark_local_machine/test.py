@@ -1,11 +1,12 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
+import os 
 
 spark = SparkSession.builder \
     .appName("MyApp") \
     .getOrCreate()
 
-account_key = ""
+account_key = os.getenv("AZURE_STORAGE_KEY")
 
 spark.conf.set(
     "fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",
