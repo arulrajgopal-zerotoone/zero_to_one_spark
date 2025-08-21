@@ -8,7 +8,7 @@ spark = SparkSession.builder \
 account_key = ""
 
 spark.conf.set(
-    "fs.azure.account.key.arulrajgopalshare.blob.core.windows.net",
+    "fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",
     account_key
 )
 
@@ -26,9 +26,14 @@ schema = StructType([
 
 df = spark.read.format("csv") \
     .schema(schema) \
-    .load("wasbs://kaniniwitharul@arulrajgopalshare.blob.core.windows.net/people_csv/people.csv")
+    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people_csv/people.csv")
+
+    
+
+repartitioned_df = df.coalesce(10)
 
 
+repartitioned_df.write.mode("overwrite").format("parquet") \
+    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people")
 
-df.limit(10).show()
 
