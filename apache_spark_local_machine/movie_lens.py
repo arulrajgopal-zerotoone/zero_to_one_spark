@@ -3,7 +3,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 import os 
 
 spark = SparkSession.builder \
-    .appName("MyApp") \
+    .appName("movie_lens") \
     .getOrCreate()
 
 account_key = os.getenv("AZURE_STORAGE_KEY")
@@ -25,8 +25,13 @@ schema = StructType([
 
 df = spark.read.format("json") \
     .schema(schema) \
-    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movie_lens_dataset_2e9bytes/source/metadata.json")
+    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/metadata.json")
 
     
 df.write.mode("overwrite").format("parquet") \
-    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movie_lens_dataset_2e9bytes/target/metadata")
+    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/movielens_detail/")
+
+
+
+
+

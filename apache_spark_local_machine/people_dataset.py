@@ -27,13 +27,14 @@ schema = StructType([
 
 df = spark.read.format("csv") \
     .schema(schema) \
-    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/source/people.csv")\
+    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/people_csv/people.csv")\
     .selectExpr("*","floor(months_between(current_date(), birth_dt) / 12) as age")
+
 
 
 grouped_df = df.groupBy("age").count()
 
 grouped_df.write.mode("overwrite").format("parquet") \
-    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/target/people")
+    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
 
 
