@@ -13,6 +13,7 @@ account_key = os.getenv("AZURE_STORAGE_KEY")
 
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
 spark.conf.set("spark.sql.files.maxPartitionBytes", "512m")
+spark.conf.set("spark.sql.adaptive.enabled", "false")
 
 
 # movie_detail
