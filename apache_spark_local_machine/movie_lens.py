@@ -40,23 +40,23 @@ movie_details_df.write.mode("overwrite").format("parquet") \
 
 
 
-# movie_ratings
-movie_ratings_schema = StructType([
-    StructField("item_id", IntegerType(), True),
-    StructField("rating", DecimalType(10, 2), True),
-    StructField("user_id", IntegerType(), True)
-])
+# # movie_ratings
+# movie_ratings_schema = StructType([
+#     StructField("item_id", IntegerType(), True),
+#     StructField("rating", DecimalType(10, 2), True),
+#     StructField("user_id", IntegerType(), True)
+# ])
 
 
-movie_ratings_df = spark.read.format("json") \
-    .schema(movie_ratings_schema) \
-    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/ratings.json")
+# movie_ratings_df = spark.read.format("json") \
+#     .schema(movie_ratings_schema) \
+#     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/ratings.json")
 
-# logging
-log_message(app_name+" | movie_ratings_df partition count :"+str(movie_ratings_df.rdd.getNumPartitions()))
+# # logging
+# log_message(app_name+" | movie_ratings_df partition count :"+str(movie_ratings_df.rdd.getNumPartitions()))
 
-movie_ratings_df.write.mode("overwrite").format("parquet") \
-    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/movie_ratings/")
+# movie_ratings_df.write.mode("overwrite").format("parquet") \
+#     .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/movie_ratings/")
 
 
 
