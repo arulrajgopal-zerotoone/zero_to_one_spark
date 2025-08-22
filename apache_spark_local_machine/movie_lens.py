@@ -33,7 +33,7 @@ movie_details_df = spark.read.format("json") \
     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/metadata.json")
 
 # logging
-log_message = app_name+" | movie_details_df partition count :"+movie_details_df.rdd.getNumPartitions()
+log_message = app_name+" | movie_details_df partition count :"+str(movie_details_df.rdd.getNumPartitions())
 spark.createDataFrame([(str(datetime.now()), log_message)]).write.mode("append").format("parquet")\
 .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/log_table/")
 
