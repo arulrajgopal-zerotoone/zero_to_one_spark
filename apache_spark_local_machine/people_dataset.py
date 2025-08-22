@@ -3,7 +3,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 import os 
 
 spark = SparkSession.builder \
-    .appName("MyApp") \
+    .appName("people") \
     .getOrCreate()
 
 account_key = os.getenv("AZURE_STORAGE_KEY")
