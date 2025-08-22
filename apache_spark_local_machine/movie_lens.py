@@ -3,7 +3,6 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 import os 
 from datetime import datetime
 
-
 app_name = "movie_lens"
 
 spark = SparkSession.builder \
@@ -14,6 +13,12 @@ account_key = os.getenv("AZURE_STORAGE_KEY")
 
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
 spark.conf.set("spark.sql.files.maxPartitionBytes", "512m")
+
+def log_message(log_message):
+    spark.createDataFrame([(str(datetime.now()), log_message)])\
+    .write.mode("append")\
+    .format("parquet")\
+    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/log_table/")
 
 # movie_detail
 movie_detail_schema = StructType([
@@ -26,18 +31,16 @@ movie_detail_schema = StructType([
 ])
 
 
-# movie_details_df = spark.read.format("json") \
-#     .schema(movie_detail_schema) \
-#     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/metadata.json")
+movie_details_df = spark.read.format("json") \
+    .schema(movie_detail_schema) \
+    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/metadata.json")
 
-# # logging
-# log_message = app_name+" | movie_details_df partition count :"+str(movie_details_df.rdd.getNumPartitions())
-# spark.createDataFrame([(str(datetime.now()), log_message)]).write.mode("append").format("parquet")\
-# .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/log_table/")
+#logging
+log_message(app_name+" | movie_details_df partition count :"+str(movie_details_df.rdd.getNumPartitions()))
 
     
-# movie_details_df.write.mode("overwrite").format("parquet") \
-#     .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/movielens_detail/")
+movie_details_df.write.mode("overwrite").format("parquet") \
+    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/movielens_detail/")
 
 
 
@@ -54,10 +57,7 @@ movie_ratings_df = spark.read.format("json") \
     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/movielens_2gb/ratings.json")
 
 # logging
-log_message = app_name+" | movie_ratings_df partition count :"+str(movie_ratings_df.rdd.getNumPartitions())
-spark.createDataFrame([(str(datetime.now()), log_message)]).write.mode("append").format("parquet")\
-.save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/log_table/")
-
+log_message(app_name+" | movie_ratings_df partition count :"+str(movie_ratings_df.rdd.getNumPartitions()))
 
 movie_ratings_df.write.mode("overwrite").format("parquet") \
     .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/movie_ratings/")
