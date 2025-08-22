@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType,DecimalType
 import os 
-from datetime import datetime
+from utils import log_message
 
 app_name = "movie_lens"
 
@@ -14,11 +14,6 @@ account_key = os.getenv("AZURE_STORAGE_KEY")
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
 spark.conf.set("spark.sql.files.maxPartitionBytes", "512m")
 
-def log_message(log_message):
-    spark.createDataFrame([(str(datetime.now()), log_message)])\
-    .write.mode("append")\
-    .format("parquet")\
-    .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/log_table/")
 
 # movie_detail
 movie_detail_schema = StructType([

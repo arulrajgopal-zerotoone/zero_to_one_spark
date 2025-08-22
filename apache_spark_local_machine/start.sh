@@ -25,8 +25,16 @@ else
 fi
 
 # Run the PySpark job with event logging
+# spark-submit \
+#   --conf spark.eventLog.enabled=true \
+#   --conf spark.eventLog.dir="file://$EVENT_LOG_DIR" \
+#   --packages org.apache.hadoop:hadoop-azure:3.3.4,com.microsoft.azure:azure-storage:8.6.6 \
+#   "$PYSPARK_SCRIPT"
+
+
 spark-submit \
   --conf spark.eventLog.enabled=true \
   --conf spark.eventLog.dir="file://$EVENT_LOG_DIR" \
   --packages org.apache.hadoop:hadoop-azure:3.3.4,com.microsoft.azure:azure-storage:8.6.6 \
+  --py-files utils.py \
   "$PYSPARK_SCRIPT"
