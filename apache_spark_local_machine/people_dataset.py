@@ -8,6 +8,7 @@ spark = SparkSession.builder.appName("people_city").getOrCreate()
 account_key = os.getenv("AZURE_STORAGE_KEY")
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
 spark.conf.set("spark.sql.adaptive.enabled", "false")
+spark.conf.set("spark.sql.shuffle.partitions", 100)
 
 schema = StructType([
     StructField("id", IntegerType(), True),
@@ -30,6 +31,6 @@ age_derived_and_filtered_df = people_df.selectExpr("*","floor(months_between(cur
 
 aggregated_df = age_derived_and_filtered_df.groupBy("city").count()
 
-aggregated_df.write.mode("overwrite").format("parquet")
+aggregated_df.write.mode("overwrite").format("parquet")\
                 .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
 
