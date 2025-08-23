@@ -1,55 +1,78 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
 from pyspark.sql.functions import col
-import os 
-from utils import log_message
+
 
 app_name = "people"
 
-spark = SparkSession.builder \
-    .appName(app_name) \
-    .getOrCreate()
+spark = SparkSession.builder.appName(app_name).getOrCreate()
 
 account_key = os.getenv("AZURE_STORAGE_KEY")
 
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
-# spark.conf.set("spark.sql.files.maxPartitionBytes", "512m")
 spark.conf.set("spark.sql.adaptive.enabled", "false")
 
-# schema = StructType([
-#     StructField("id", IntegerType(), True),
-#     StructField("first_name", StringType(), True),
-#     StructField("middle_name", StringType(), True),
-#     StructField("last_name", StringType(), True),
-#     StructField("gender", StringType(), True),
-#     StructField("birth_dt", TimestampType(), True),
-#     StructField("ssn", StringType(), True),
-#     StructField("salary", IntegerType(), True)
-# ])
+schema = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("first_name", StringType(), True),
+    StructField("middle_name", StringType(), True),
+    StructField("last_name", StringType(), True),
+    StructField("gender", StringType(), True),
+    StructField("birth_dt", TimestampType(), True),
+    StructField("ssn", StringType(), True),
+    StructField("salary", IntegerType(), True),
+    StructField("city", StringType(), True)
+
+])
+
+
+people_df = spark.read.format("csv")\
+    .schema(schema) \
+    .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/people_csv/people.csv")
+
+age_derived_and_filtered_df = people_df.selectExpr("*","floor(months_between(current_date(), birth_dt) / 12) as age")\
+                                .filter(col("salary")> 30000)
+
+aggregated_df = age_derived_and_filtered_df.groupBy("city").count()
+
+aggregated_df.write.mode("overwrite").format("parquet").save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
+
+
+
+
+
+
+
+
+
+
 
 
 # people_df = spark.read.format("csv") \
 #     .schema(schema) \
 #     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/people_csv/people.csv")\
-#     .selectExpr("*","floor(months_between(current_date(), birth_dt) / 12) as age")\
-#     .filter(col("salary")> 30000)\
-#     .coalesce(3)
+#     .withColumn("city_id", floor(rand() * 300 + 1))
 
 
-# log_message(app_name+" | people_df partition count :"+str(people_df.rdd.getNumPartitions()))
+# city_schema = StructType([
+#     StructField("city_id", IntegerType(), True),
+#     StructField("city", StringType(), True)
+# ])
 
-# grouped_df = people_df.groupBy("age").count().coalesce(3)
-
-# log_message(app_name+" | grouped_df partition count :"+str(grouped_df.rdd.getNumPartitions()))
-
-# people_df.write.mode("overwrite").partitionBy("age").format("parquet") \
-#     .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
+# city_df = spark.read.format("csv") \
+#     .schema(city_schema) \
+#     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/people_csv/us_cities.csv")
 
 
-read_df = spark.read.format('parquet').load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
+# joined_df = people_df.alias("LH").join(city_df.alias("RH"), col("LH.city_id")==col("RH.city_id")).select("LH.*","RH.city").coalesce(1)
 
-log_message(app_name+" | read_df partition count :"+str(read_df.rdd.getNumPartitions()))
+# dropped_df = joined_df.drop("city_id")
 
-read_df.filter(col("age")==35).show()
+
+# dropped_df.write.mode("overwrite").format("csv").save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
+
+
+
+
 
 
