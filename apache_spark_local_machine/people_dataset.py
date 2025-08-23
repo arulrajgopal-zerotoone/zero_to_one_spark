@@ -2,13 +2,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
 from pyspark.sql.functions import col
 
-
-app_name = "people"
-
-spark = SparkSession.builder.appName(app_name).getOrCreate()
+spark = SparkSession.builder.appName("people").getOrCreate()
 
 account_key = os.getenv("AZURE_STORAGE_KEY")
-
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
 spark.conf.set("spark.sql.adaptive.enabled", "false")
 
@@ -22,9 +18,7 @@ schema = StructType([
     StructField("ssn", StringType(), True),
     StructField("salary", IntegerType(), True),
     StructField("city", StringType(), True)
-
 ])
-
 
 people_df = spark.read.format("csv")\
     .schema(schema) \
