@@ -30,5 +30,6 @@ age_derived_and_filtered_df = people_df.selectExpr("*","floor(months_between(cur
 
 aggregated_df = age_derived_and_filtered_df.groupBy("city").count()
 
-aggregated_df.write.mode("overwrite").format("parquet").save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
+aggregated_df.write.mode("overwrite").format("parquet")
+                .save("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/test_path/people")
 
