@@ -8,7 +8,7 @@ spark = SparkSession.builder.appName("people_city").getOrCreate()
 account_key = os.getenv("AZURE_STORAGE_KEY")
 spark.conf.set("fs.azure.account.key.arulrajgopalshare.dfs.core.windows.net",account_key)
 spark.conf.set("spark.sql.adaptive.enabled", "false")
-spark.conf.set("spark.sql.shuffle.partitions", 100)
+spark.conf.set("spark.sql.shuffle.partitions", 10)
 
 schema = StructType([
     StructField("id", IntegerType(), True),
@@ -25,6 +25,8 @@ schema = StructType([
 people_df = spark.read.format("csv")\
     .schema(schema) \
     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/people_csv/people.csv")
+
+people_df.show()
 
 age_derived_and_filtered_df = people_df.selectExpr("*","floor(months_between(current_date(), birth_dt) / 12) as age")\
                                 .filter(col("salary")> 30000)

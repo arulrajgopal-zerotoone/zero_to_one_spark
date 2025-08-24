@@ -27,6 +27,7 @@ fi
 
 spark-submit \
   --conf spark.eventLog.enabled=true \
-  --conf spark.eventLog.dir="file://$EVENT_LOG_DIR" \
   --packages org.apache.hadoop:hadoop-azure:3.3.4,com.microsoft.azure:azure-storage:8.6.6 \
+  --conf spark.eventLog.dir="file://$EVENT_LOG_DIR" \
   "$PYSPARK_SCRIPT"
+
