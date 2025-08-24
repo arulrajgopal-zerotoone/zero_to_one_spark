@@ -26,7 +26,6 @@ people_df = spark.read.format("csv")\
     .schema(schema) \
     .load("abfss://kaniniwitharul@arulrajgopalshare.dfs.core.windows.net/people/people_csv/people.csv")
 
-people_df.show()
 
 age_derived_and_filtered_df = people_df.selectExpr("*","floor(months_between(current_date(), birth_dt) / 12) as age")\
                                 .filter(col("salary")> 30000)
